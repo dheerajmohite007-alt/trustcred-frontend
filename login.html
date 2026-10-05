@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustCred - Select Role</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">Welcome to TrustCred</h1>
+        <p class="text-slate-500 mb-8">Select your portal to continue</p>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="border rounded-xl p-6 hover:border-blue-500 cursor-pointer" onclick="location.href='student-dashboard.html'">
+                <div class="text-4xl mb-4">🎓</div>
+                <h3 class="font-bold text-lg mb-2">Student Login</h3>
+                <p class="text-sm text-slate-500">Access credentials and QR codes[cite: 1, 2].</p>
+            </div>
+            <div class="border rounded-xl p-6 hover:border-blue-500 cursor-pointer" onclick="location.href='org-dashboard.html'">
+                <div class="text-4xl mb-4">🏛️</div>
+                <h3 class="font-bold text-lg mb-2">Organization Login</h3>
+                <p class="text-sm text-slate-500">Issue and manage credentials[cite: 2].</p>
+            </div>
+            <div class="border rounded-xl p-6 hover:border-blue-500 cursor-pointer" onclick="location.href='verifier-dashboard.html'">
+                <div class="text-4xl mb-4">🔍</div>
+                <h3 class="font-bold text-lg mb-2">Verifier Login</h3>
+                <p class="text-sm text-slate-500">Scan QRs and verify instantly[cite: 2].</p>
+            </div>
+        </div>
+        <div class="mt-8"><a href="index.html" class="text-slate-500 text-sm hover:underline">← Back to Home</a></div>
+    </div>
+</body>
+</html>
