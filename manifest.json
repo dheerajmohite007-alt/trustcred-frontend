@@ -7,12 +7,7 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "https://img.icons8.com/color/192/48/verified-account.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://img.icons8.com/color/512/48/verified-account.png",
+      "src": "https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/html/html.png",
       "sizes": "512x512",
       "type": "image/png"
     }
