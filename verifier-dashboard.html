@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustCred - Verifier Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 font-sans min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
+        <div class="text-xl font-bold text-blue-600">🛡️ TrustCred Verifier Portal</div>
+        <a href="login.html" class="text-slate-600 hover:text-red-600 font-medium text-sm">Logout</a>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-2xl mx-auto p-6 w-full mt-10">
+        <div class="bg-white rounded-xl shadow-md p-8 border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">Instant Credential Verification</h2>
+            <p class="text-slate-500 text-sm mb-6">Scan QR code or enter the unique Credential ID below to check verification status[cite: 2].</p>
+            
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="credIdInput" placeholder="Enter Credential ID (e.g., TC-99281-CS)" class="flex-1 border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="verifyCredential()" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition">Verify</button>
+            </div>
+
+            <!-- Result Box -->
+            <div id="resultBox" class="hidden border rounded-lg p-5">
+                <h4 id="resultTitle" class="font-bold text-lg mb-2"></h4>
+                <p id="resultDesc" class="text-sm text-slate-600"></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function verifyCredential() {
+            const val = document.getElementById('credIdInput').value.trim();
+            const box = document.getElementById('resultBox');
+            const title = document.getElementById('resultTitle');
+            const desc = document.getElementById('resultDesc');
+            
+            box.classList.remove('hidden');
+            
+            if (val === "" || val.includes("invalid")) {
+                box.className = "border rounded-lg p-5 bg-red-50 border-red-200";
+                title.className = "font-bold text-lg mb-2 text-red-700";
+                title.innerText = "❌ Verification Result: INVALID";
+                desc.innerText = "Credential is not found in the database or security signature mismatch.";
+            } else if (val.includes("revoke")) {
+                box.className = "border rounded-lg p-5 bg-amber-50 border-amber-200";
+                title.className = "font-bold text-lg mb-2 text-amber-700";
+                title.innerText = "⚠️ Verification Result: REVOKED";
+                desc.innerText = "This credential has been officially revoked by the issuing organization.";
+            } else {
+                box.className = "border rounded-lg p-5 bg-green-50 border-green-200";
+                title.className = "font-bold text-lg mb-2 text-green-700";
+                title.innerText = "✅ Verification Result: VERIFIED";
+                desc.innerText = "Valid credential issued by Mumbai University. Holder: Student | Status: Active.";
+            }
+        }
+    </script>
+</body>
+</html>

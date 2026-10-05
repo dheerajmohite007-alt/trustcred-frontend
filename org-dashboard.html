@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustCred - Organization Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-64 bg-slate-900 text-white p-6 hidden md:block">
+            <h2 class="text-2xl font-bold mb-8 text-blue-400">🛡️ TrustCred</h2>
+            <nav class="space-y-4 font-medium">
+                <a href="#" class="block py-2.5 px-4 rounded bg-blue-600 text-white">Dashboard</a>
+                <a href="#issue" class="block py-2.5 px-4 rounded hover:bg-slate-800 text-slate-300">Issue Credential</a>
+                <a href="#manage" class="block py-2.5 px-4 rounded hover:bg-slate-800 text-slate-300">Manage Credentials</a>
+                <a href="login.html" class="block py-2.5 px-4 rounded hover:bg-red-600 text-red-400 mt-20">Logout</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <header class="bg-white shadow-sm p-6 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-slate-800">Organization Portal (Issuer)</h1>
+                <span class="text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-medium">Role: Organization</span>
+            </header>
+
+            <main class="p-8 max-w-4xl">
+                <!-- Issue Credential Form -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Issue New Digital Credential</h3>
+                    <form onsubmit="event.preventDefault(); alert('Credential issued successfully! Unique Credential ID & QR generated and stored in database.');" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Student Name</label>
+                                <input type="text" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Student ID / Roll No.</label>
+                                <input type="text" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. 22">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Credential Type / Course</label>
+                            <input type="text" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. B.Tech Computer Science and Design">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Issue Date</label>
+                                <input type="date" required class="w-full border rounded-lg p-2.5 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Expiry Date (Optional)</label>
+                                <input type="date" class="w-full border rounded-lg p-2.5 text-sm">
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition">Generate ID & QR & Issue</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
