@@ -1,29 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustCred - Verifier Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-100 font-sans p-8 flex flex-col items-center min-h-screen">
-    <div class="max-w-xl w-full bg-white rounded-xl shadow-md p-8 border border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-900 mb-2">Instant Credential Verification</h2>
-        <p class="text-slate-500 text-sm mb-6">Enter Credential ID to check hash authenticity against the registry[cite: 1, 2].</p>
-        
-        <div class="flex gap-2 mb-6">
-            <input type="text" id="verifyId" placeholder="Enter ID (e.g. TC-482910)" class="flex-1 border rounded-lg px-4 py-2 text-sm uppercase">
-            <button onclick="verifyCredential()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">Verify</button>
-        </div>
 
-        <!-- Verification Output Display -->
-        <div id="outputBox" class="hidden p-4 rounded-lg border"></div>
-
-        <div class="mt-6"><a href="index.html" class="text-sm text-blue-600 hover:underline">← Back to Home</a></div>
-    </div>
-
-    <script>
-        function verifyCredential() {
+<script>
+        async function verifyCredential() {
             const inputId = document.getElementById('verifyId').value.trim();
             const outputBox = document.getElementById('outputBox');
             outputBox.classList.remove('hidden');
@@ -34,31 +11,50 @@
                 return;
             }
 
-            // Fetch simulated database from localStorage
-            const credentials = JSON.parse(localStorage.getItem('trustcred_db') || '[]');
-            const found = credentials.find(c => c.id.toUpperCase() === inputId.toUpperCase());
+            // Show loading state while talking to the Java backend
+            outputBox.className = "p-4 rounded-lg border bg-slate-50 border-slate-200 text-slate-700";
+            outputBox.innerHTML = "Checking with Java backend database...";
 
-            if (found) {
-                // Genuine Match Found
-                outputBox.className = "p-4 rounded-lg border bg-green-50 border-green-200 text-green-900";
-                outputBox.innerHTML = `
-                    <h3 class="font-bold text-lg mb-1">✓ CERTIFICATE GENUINE (VERIFIED)</h3>
-                    <p class="text-xs text-slate-600 mb-2">Matched with official secure system registry records.</p>
-                    <hr class="my-2 border-green-200">
-                    <p class="text-sm"><strong>Holder:</strong> ${found.name}</p>
-                    <p class="text-sm"><strong>Credential:</strong> ${found.course}</p>
-                    <p class="text-xs font-mono text-slate-500 mt-2">Hash Fingerprint: ${found.hash}</p>
-                `;
-            } else {
-                // Fake / Not Found / Tampered Flag
+            try {
+                // Send request to your local Java HttpServer
+                const response = await fetch('http://localhost:8080/api/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credentialId: inputId })
+                });
+
+                const resultText = await response.text();
+
+                if (resultText === 'VERIFIED') {
+                    outputBox.className = "p-4 rounded-lg border bg-green-50 border-green-200 text-green-900";
+                    outputBox.innerHTML = `
+                        <h3 class="font-bold text-lg mb-1">✓ CERTIFICATE GENUINE (VERIFIED)</h3>
+                        <p class="text-xs text-slate-600 mb-2">Matched with official Java MySQL database records.</p>
+                        <hr class="my-2 border-green-200">
+                        <p class="text-xs font-mono text-slate-500 mt-2">Checked ID: ${inputId}</p>
+                    `;
+                } else if (resultText === 'REVOKED') {
+                    outputBox.className = "p-4 rounded-lg border bg-orange-50 border-orange-200 text-orange-900";
+                    outputBox.innerHTML = `
+                        <h3 class="font-bold text-lg mb-1">⚠ CERTIFICATE REVOKED</h3>
+                        <p class="text-xs text-orange-700">This certificate was active previously but has been revoked by the issuer.</p>
+                        <p class="text-xs font-mono text-slate-500 mt-2">Checked ID: ${inputId}</p>
+                    `;
+                } else {
+                    outputBox.className = "p-4 rounded-lg border bg-red-50 border-red-200 text-red-900";
+                    outputBox.innerHTML = `
+                        <h3 class="font-bold text-lg mb-1">✗ INVALID OR FAKE CERTIFICATE</h3>
+                        <p class="text-xs text-red-700">No matching record found in the backend MySQL database.</p>
+                        <p class="text-xs font-mono text-slate-500 mt-2">Checked ID: ${inputId}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error("Backend connection error:", error);
                 outputBox.className = "p-4 rounded-lg border bg-red-50 border-red-200 text-red-900";
                 outputBox.innerHTML = `
-                    <h3 class="font-bold text-lg mb-1">✗ INVALID OR FAKE CERTIFICATE</h3>
-                    <p class="text-xs text-red-700">No matching record or digital fingerprint found in the system registry. This certificate may be tampered with or fraudulent.</p>
-                    <p class="text-xs font-mono text-slate-500 mt-2">Checked ID: ${inputId}</p>
+                    <h3 class="font-bold text-lg mb-1">Connection Error</h3>
+                    <p class="text-xs text-red-700">Could not connect to the Java backend server. Make sure Server.java is running on port 8080.</p>
                 `;
             }
         }
     </script>
-</body>
-</html>
