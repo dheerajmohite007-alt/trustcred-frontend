@@ -6,60 +6,65 @@
     <title>TrustCred - Organization Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 font-sans">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <div class="w-64 bg-slate-900 text-white p-6 hidden md:block">
-            <h2 class="text-2xl font-bold mb-8 text-blue-400">🛡️ TrustCred</h2>
-            <nav class="space-y-4 font-medium">
-                <a href="#" class="block py-2.5 px-4 rounded bg-blue-600 text-white">Dashboard</a>
-                <a href="#issue" class="block py-2.5 px-4 rounded hover:bg-slate-800 text-slate-300">Issue Credential</a>
-                <a href="#manage" class="block py-2.5 px-4 rounded hover:bg-slate-800 text-slate-300">Manage Credentials</a>
-                <a href="login.html" class="block py-2.5 px-4 rounded hover:bg-red-600 text-red-400 mt-20">Logout</a>
-            </nav>
+<body class="bg-slate-100 font-sans p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+        <h1 class="text-2xl font-bold text-slate-800 mb-2">Organization Portal</h1>
+        <p class="text-sm text-slate-500 mb-6">Issue digital credentials and generate secure SHA-256 hashes[cite: 1, 2].</p>
+        
+        <form id="issueForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">Student Name</label>
+                <input type="text" id="studentName" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. John Doe">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">Credential Type / Course</label>
+                <input type="text" id="courseName" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. B.Tech Computer Science">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700">Issue Credential & Generate Hash</button>
+        </form>
+
+        <!-- Result Box for Generated ID & Hash -->
+        <div id="resultBox" class="hidden mt-6 p-4 bg-slate-50 border rounded-lg">
+            <h3 class="font-bold text-slate-800 mb-2 text-green-600">✓ Credential Issued Successfully!</h3>
+            <p class="text-xs text-slate-500 mb-1">Unique Credential ID:</p>
+            <p id="displayId" class="font-mono text-sm font-bold text-slate-700 bg-white p-2 border rounded mb-2 select-all"></p>
+            <p class="text-xs text-slate-500 mb-1">SHA-256 Digital Fingerprint (Hash):</p>
+            <p id="displayHash" class="font-mono text-xs text-slate-600 bg-white p-2 border rounded break-all select-all"></p>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-y-auto">
-            <header class="bg-white shadow-sm p-6 flex justify-between items-center">
-                <h1 class="text-xl font-bold text-slate-800">Organization Portal (Issuer)</h1>
-                <span class="text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-medium">Role: Organization</span>
-            </header>
-
-            <main class="p-8 max-w-4xl">
-                <!-- Issue Credential Form -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Issue New Digital Credential</h3>
-                    <form onsubmit="event.preventDefault(); alert('Credential issued successfully! Unique Credential ID & QR generated and stored in database.');" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Student Name</label>
-                                <input type="text" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. John Doe">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Student ID / Roll No.</label>
-                                <input type="text" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. 22">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-1">Credential Type / Course</label>
-                            <input type="text" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="e.g. B.Tech Computer Science and Design">
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Issue Date</label>
-                                <input type="date" required class="w-full border rounded-lg p-2.5 text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Expiry Date (Optional)</label>
-                                <input type="date" class="w-full border rounded-lg p-2.5 text-sm">
-                            </div>
-                        </div>
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition">Generate ID & QR & Issue</button>
-                    </form>
-                </div>
-            </main>
-        </div>
+        <div class="mt-6"><a href="login.html" class="text-sm text-blue-600 hover:underline">← Back to Login</a></div>
     </div>
+
+    <script>
+        // Function to generate SHA-256 hash
+        async function generateSHA256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        document.getElementById('issueForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value;
+            const course = document.getElementById('courseName').value;
+            
+            // Generate unique ID and Hash
+            const credId = 'TC-' + Math.floor(100000 + Math.random() * 900000);
+            const rawString = name + course + credId + Date.now();
+            const hash = await generateSHA256(rawString);
+
+            // Store in browser localStorage (Simulating secure database)
+            const credentialRecord = { id: credId, name: name, course: course, hash: hash, status: 'VERIFIED' };
+            let credentials = JSON.parse(localStorage.getItem('trustcred_db') || '[]');
+            credentials.push(credentialRecord);
+            localStorage.setItem('trustcred_db', JSON.stringify(credentials));
+
+            // Display results
+            document.getElementById('displayId').innerText = credId;
+            document.getElementById('displayHash').innerText = hash;
+            document.getElementById('resultBox').classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>
